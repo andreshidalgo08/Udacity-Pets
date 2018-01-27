@@ -53,7 +53,7 @@ public class CatalogActivity extends AppCompatActivity {
         });
 
         db = AppDatabase.getDbInstance(this);
-        new DBTestTask().execute();
+        new GetAllPetsTask().execute();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class CatalogActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to a click on the "Insert dummy data" menu option
             case R.id.action_insert_dummy_data:
-                // Do nothing for now
+                new InsertPetTask().execute();
                 return true;
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries:
@@ -80,20 +80,22 @@ public class CatalogActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class DBTestTask extends AsyncTask<Void, Void, Integer> {
+    private class GetAllPetsTask extends AsyncTask<Void, Void, Integer> {
         @Override
         protected Integer doInBackground(Void... v) {
-//            Log.d("room", "doInBackground: ");
-//            db.insertProduct(new ProductEntity("name4", "description4", 4000));
             List<PetEntity> pets = db.getAllPets();
-//            Log.d(TAG, "" + pets.get(pets.size() - 1).getId());
             Log.d(TAG, "Number of pets: " + pets.size());
             return 0;
         }
+    }
 
+    private class InsertPetTask extends AsyncTask<Void, Void, Integer> {
         @Override
-        protected void onPostExecute(Integer i) {
-            Log.d("room", "onPostExecute: ");
+        protected Integer doInBackground(Void... v) {
+            db.insertPet(new PetEntity("pet", "breed", "gender", 100));
+            List<PetEntity> pets = db.getAllPets();
+            Log.d(TAG, "Number of pets: " + pets.size());
+            return 0;
         }
     }
 }
