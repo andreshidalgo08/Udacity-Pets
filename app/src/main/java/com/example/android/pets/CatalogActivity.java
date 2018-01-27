@@ -16,17 +16,26 @@
 package com.example.android.pets;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.example.android.pets.data.AppDatabase;
+import com.example.android.pets.data.PetEntity;
+
+import java.util.List;
 
 /**
  * Displays list of pets that were entered and stored in the app.
  */
 public class CatalogActivity extends AppCompatActivity {
+    private String TAG = CatalogActivity.class.getSimpleName();
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +51,9 @@ public class CatalogActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        db = AppDatabase.getDbInstance(this);
+        new DBTestTask().execute();
     }
 
     @Override
@@ -66,5 +78,22 @@ public class CatalogActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private class DBTestTask extends AsyncTask<Void, Void, Integer> {
+        @Override
+        protected Integer doInBackground(Void... v) {
+//            Log.d("room", "doInBackground: ");
+//            db.insertProduct(new ProductEntity("name4", "description4", 4000));
+            List<PetEntity> pets = db.getAllPets();
+//            Log.d(TAG, "" + pets.get(pets.size() - 1).getId());
+            Log.d(TAG, "Number of pets: " + pets.size());
+            return 0;
+        }
+
+        @Override
+        protected void onPostExecute(Integer i) {
+            Log.d("room", "onPostExecute: ");
+        }
     }
 }
