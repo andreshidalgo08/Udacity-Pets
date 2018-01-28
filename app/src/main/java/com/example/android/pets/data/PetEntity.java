@@ -2,6 +2,7 @@ package com.example.android.pets.data;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.net.Uri;
 
 @Entity(tableName = "pets")
 public class PetEntity {
@@ -15,6 +16,11 @@ public class PetEntity {
     public static final int GENDER_UNKNOWN = 0;
     public static final int GENDER_MALE = 1;
     public static final int GENDER_FEMALE = 2;
+
+    public static final String CONTENT_AUTHORITY = "com.example.android.pets";
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    public static final String PATH_PETS = "pets";
+    public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_PETS);
 
     public PetEntity(String name, String breed, String gender, int weight) {
         this.name = name;
