@@ -131,7 +131,7 @@ public class EditorActivity extends AppCompatActivity {
                 new InsertPetTask().execute(new PetEntity(
                         mNameEditText.getText().toString(),
                         mBreedEditText.getText().toString(),
-                        "",
+                        mGenderSpinner.getSelectedItem().toString(),
                         Integer.parseInt(mWeightEditText.getText().toString())
                 ));
                 finish();
