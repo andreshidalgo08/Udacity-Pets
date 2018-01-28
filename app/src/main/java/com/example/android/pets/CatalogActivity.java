@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.android.pets.data.AppDatabase;
 import com.example.android.pets.data.PetEntity;
@@ -36,11 +37,14 @@ import java.util.List;
 public class CatalogActivity extends AppCompatActivity {
     private String TAG = CatalogActivity.class.getSimpleName();
     private AppDatabase db;
+    private TextView displayView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_catalog);
+
+        displayView = (TextView) findViewById(R.id.text_view_pet);
 
         // Setup FAB to open EditorActivity
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -86,12 +90,31 @@ public class CatalogActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class GetAllPetsTask extends AsyncTask<Void, Void, Integer> {
+    private class GetAllPetsTask extends AsyncTask<Void, Void, List<PetEntity>> {
         @Override
-        protected Integer doInBackground(Void... v) {
+        protected List<PetEntity> doInBackground(Void... v) {
             List<PetEntity> pets = db.getAllPets();
             Log.d(TAG, "Number of pets: " + pets.size());
-            return 0;
+            return pets;
+        }
+
+        @Override
+        protected void onPostExecute(List<PetEntity> pets) {
+            try {
+                displayView.setText("The pets table contains: " + pets.size());
+
+                for (int i = 0; i < pets.size(); i++) {
+                    PetEntity pet = pets.get(i);
+                    displayView.append(("\n" + pet.getId() + " - " +
+                            pet.getName() + " - " +
+                            pet.getBreed() + " - " +
+                            pet.getGender() + " - " +
+                            pet.getWeight()));
+                }
+            }
+            finally {
+
+            }
         }
     }
 
