@@ -64,4 +64,17 @@ public abstract class AppDatabase extends RoomDatabase {
             );
         }
     }
+
+    public void deletePet (final PetEntity pet) {
+        if (dbInstance != null) {
+            dbInstance.runInTransaction(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            dbInstance.petDao().deletePet(pet);
+                        }
+                    }
+            );
+        }
+    }
 }
