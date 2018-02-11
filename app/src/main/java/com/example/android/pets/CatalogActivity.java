@@ -25,7 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.ListView;
 
 import com.example.android.pets.data.PetEntity;
 
@@ -38,14 +38,15 @@ public class CatalogActivity extends AppCompatActivity {
 
     private String TAG = CatalogActivity.class.getSimpleName();
     private PetsViewModel petsViewModel;
-    private TextView displayView;
+    private ListView petsListView;
+    private PetAdapter petAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_catalog);
 
-        displayView = (TextView) findViewById(R.id.text_view_pet);
+        petsListView = (ListView) findViewById(R.id.list);
 
         // Setup FAB to open EditorActivity
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -66,15 +67,8 @@ public class CatalogActivity extends AppCompatActivity {
         petsViewModel.pets.observe(this, new Observer<List<PetEntity>>() {
             @Override
             public void onChanged(@Nullable List<PetEntity> pets) {
-                displayView.setText("The pets table contains: " + pets.size());
-
-                for (PetEntity pet : pets) {
-                    displayView.append(("\n" + pet.getId() + " - " +
-                            pet.getName() + " - " +
-                            pet.getBreed() + " - " +
-                            pet.getGender() + " - " +
-                            pet.getWeight()));
-                }
+                petAdapter = new PetAdapter(getApplicationContext(), pets);
+                petsListView.setAdapter(petAdapter);
             }
         });
     }
