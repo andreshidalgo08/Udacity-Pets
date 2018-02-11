@@ -15,12 +15,11 @@
  */
 package com.example.android.pets;
 
-import android.os.AsyncTask;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,17 +28,14 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.example.android.pets.data.AppDatabase;
 import com.example.android.pets.data.PetEntity;
-
-import java.util.List;
 
 /**
  * Allows user to create a new pet or edit an existing one.
  */
 public class EditorActivity extends AppCompatActivity {
     private String TAG = EditorActivity.class.getSimpleName();
-    private AppDatabase db;
+    private PetsViewModel petsViewModel;
 
     /** EditText field to enter the pet's name */
     private EditText mNameEditText;
@@ -72,7 +68,7 @@ public class EditorActivity extends AppCompatActivity {
 
         setupSpinner();
 
-        db = AppDatabase.getDbInstance(this);
+        petsViewModel = ViewModelProviders.of(this).get(PetsViewModel.class);
     }
 
     /**
@@ -128,12 +124,12 @@ public class EditorActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
-                new InsertPetTask().execute(new PetEntity(
+                petsViewModel.insertPet(new PetEntity(
                         mNameEditText.getText().toString(),
                         mBreedEditText.getText().toString(),
                         mGenderSpinner.getSelectedItem().toString(),
-                        Integer.parseInt(mWeightEditText.getText().toString())
-                ));
+                        Integer.parseInt(mWeightEditText.getText().toString()))
+                );
                 finish();
                 return true;
             // Respond to a click on the "Delete" menu option
@@ -147,16 +143,5 @@ public class EditorActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private class InsertPetTask extends AsyncTask<PetEntity, Void, Integer> {
-        @Override
-        protected Integer doInBackground(PetEntity... pets) {
-            Log.d(TAG, "pet: " + pets[0].getName());
-            db.insertPet(pets[0]);
-            List<PetEntity> allPets = db.getAllPets();
-            Log.d(TAG, "Number of pets: " + allPets.size());
-            return 0;
-        }
     }
 }

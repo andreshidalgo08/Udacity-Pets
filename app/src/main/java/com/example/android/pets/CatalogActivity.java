@@ -15,18 +15,18 @@
  */
 package com.example.android.pets;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.android.pets.data.AppDatabase;
 import com.example.android.pets.data.PetEntity;
 
 import java.util.List;
@@ -35,8 +35,9 @@ import java.util.List;
  * Displays list of pets that were entered and stored in the app.
  */
 public class CatalogActivity extends AppCompatActivity {
+
     private String TAG = CatalogActivity.class.getSimpleName();
-    private AppDatabase db;
+    private PetsViewModel petsViewModel;
     private TextView displayView;
 
     @Override
@@ -56,14 +57,26 @@ public class CatalogActivity extends AppCompatActivity {
             }
         });
 
-        db = AppDatabase.getDbInstance(this);
-        new GetAllPetsTask().execute();
+        petsViewModel = ViewModelProviders.of(this).get(PetsViewModel.class);
+
+        subscribeUiPets();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        new GetAllPetsTask().execute();
+    private void subscribeUiPets() {
+        petsViewModel.pets.observe(this, new Observer<List<PetEntity>>() {
+            @Override
+            public void onChanged(@Nullable List<PetEntity> pets) {
+                displayView.setText("The pets table contains: " + pets.size());
+
+                for (PetEntity pet : pets) {
+                    displayView.append(("\n" + pet.getId() + " - " +
+                            pet.getName() + " - " +
+                            pet.getBreed() + " - " +
+                            pet.getGender() + " - " +
+                            pet.getWeight()));
+                }
+            }
+        });
     }
 
     @Override
@@ -80,8 +93,7 @@ public class CatalogActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to a click on the "Insert dummy data" menu option
             case R.id.action_insert_dummy_data:
-                new InsertPetTask().execute();
-                new GetAllPetsTask().execute();
+                petsViewModel.insertDummyPet();
                 return true;
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries:
@@ -89,43 +101,5 @@ public class CatalogActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private class GetAllPetsTask extends AsyncTask<Void, Void, List<PetEntity>> {
-        @Override
-        protected List<PetEntity> doInBackground(Void... v) {
-            List<PetEntity> pets = db.getAllPets();
-            Log.d(TAG, "Number of pets: " + pets.size());
-            return pets;
-        }
-
-        @Override
-        protected void onPostExecute(List<PetEntity> pets) {
-            try {
-                displayView.setText("The pets table contains: " + pets.size());
-
-                for (int i = 0; i < pets.size(); i++) {
-                    PetEntity pet = pets.get(i);
-                    displayView.append(("\n" + pet.getId() + " - " +
-                            pet.getName() + " - " +
-                            pet.getBreed() + " - " +
-                            pet.getGender() + " - " +
-                            pet.getWeight()));
-                }
-            }
-            finally {
-
-            }
-        }
-    }
-
-    private class InsertPetTask extends AsyncTask<Void, Void, Integer> {
-        @Override
-        protected Integer doInBackground(Void... v) {
-            db.insertPet(new PetEntity("pet", "breed", "gender", 100));
-            List<PetEntity> pets = db.getAllPets();
-            Log.d(TAG, "Number of pets: " + pets.size());
-            return 0;
-        }
     }
 }
