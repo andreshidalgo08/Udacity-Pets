@@ -5,8 +5,6 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-import java.util.List;
-
 @Database(entities = {PetEntity.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "shelter.db";
@@ -32,49 +30,7 @@ public abstract class AppDatabase extends RoomDatabase {
         return dbInstance;
     }
 
-    public void insertPet (final PetEntity pet) {
-        if (dbInstance != null) {
-            dbInstance.runInTransaction(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            dbInstance.petDao().insertPet(pet);
-                        }
-                    }
-            );
-        }
-    }
-
-    public List<PetEntity> getAllPets() {
-        if (dbInstance != null) {
-            return dbInstance.petDao().loadAllPets();
-        }
-        return null;
-    }
-
-    public void updatePet (final PetEntity pet) {
-        if (dbInstance != null) {
-            dbInstance.runInTransaction(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            dbInstance.petDao().updatePet(pet);
-                        }
-                    }
-            );
-        }
-    }
-
-    public void deletePet (final PetEntity pet) {
-        if (dbInstance != null) {
-            dbInstance.runInTransaction(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            dbInstance.petDao().deletePet(pet);
-                        }
-                    }
-            );
-        }
+    public static void destroyInstance() {
+        dbInstance = null;
     }
 }
