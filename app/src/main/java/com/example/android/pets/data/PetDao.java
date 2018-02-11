@@ -1,5 +1,6 @@
 package com.example.android.pets.data;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -12,7 +13,7 @@ import java.util.List;
 @Dao
 public interface PetDao {
     @Query("SELECT * FROM pets")
-    List<PetEntity> loadAllPets();
+    LiveData<List<PetEntity>> loadAllPets();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertPet(PetEntity pet);
