@@ -39,6 +39,7 @@ public class CatalogActivity extends AppCompatActivity {
     private String TAG = CatalogActivity.class.getSimpleName();
     private PetsViewModel petsViewModel;
     private ListView petsListView;
+    private View emptyView;
     private PetAdapter petAdapter;
 
     @Override
@@ -47,6 +48,9 @@ public class CatalogActivity extends AppCompatActivity {
         setContentView(R.layout.activity_catalog);
 
         petsListView = (ListView) findViewById(R.id.list);
+
+        emptyView = findViewById(R.id.empty_view);
+        petsListView.setEmptyView(emptyView);
 
         // Setup FAB to open EditorActivity
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
