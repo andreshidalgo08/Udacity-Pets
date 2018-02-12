@@ -35,6 +35,7 @@ import com.example.android.pets.data.PetEntity;
  */
 public class EditorActivity extends AppCompatActivity {
     private String TAG = EditorActivity.class.getSimpleName();
+    private ArrayAdapter genderSpinnerAdapter;
     private PetsViewModel petsViewModel;
 
     /** EditText field to enter the pet's name */
@@ -69,6 +70,20 @@ public class EditorActivity extends AppCompatActivity {
         setupSpinner();
 
         petsViewModel = ViewModelProviders.of(this).get(PetsViewModel.class);
+
+        if (getIntent().getLongExtra("id", -1) != -1) {
+            long id = getIntent().getLongExtra("id", -1);
+            setTitle(R.string.editor_activity_title_edit_pet);
+
+            PetEntity editPet = petsViewModel.getPetById(id);
+
+            mNameEditText.setText(editPet.getName());
+            mBreedEditText.setText(editPet.getBreed());
+            mWeightEditText.setText(editPet.getWeight());
+
+            /*int spinnerPosition = genderSpinnerAdapter.getPosition(editPet.getGender());
+            mGenderSpinner.setSelection(spinnerPosition);*/
+        }
     }
 
     /**
@@ -77,7 +92,7 @@ public class EditorActivity extends AppCompatActivity {
     private void setupSpinner() {
         // Create adapter for spinner. The list options are from the String array it will use
         // the spinner will use the default layout
-        ArrayAdapter genderSpinnerAdapter = ArrayAdapter.createFromResource(this,
+        genderSpinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.array_gender_options, android.R.layout.simple_spinner_item);
 
         // Specify dropdown layout style - simple list view with 1 item per line
