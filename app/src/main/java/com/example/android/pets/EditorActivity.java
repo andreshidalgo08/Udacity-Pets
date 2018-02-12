@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.android.pets.data.PetEntity;
 
@@ -38,6 +38,8 @@ public class EditorActivity extends AppCompatActivity {
     private String TAG = EditorActivity.class.getSimpleName();
     private ArrayAdapter genderSpinnerAdapter;
     private PetsViewModel petsViewModel;
+    private boolean editMode = false;
+    private PetEntity editPet;
 
     /** EditText field to enter the pet's name */
     private EditText mNameEditText;
@@ -73,10 +75,11 @@ public class EditorActivity extends AppCompatActivity {
         petsViewModel = ViewModelProviders.of(this).get(PetsViewModel.class);
 
         if (getIntent().getLongExtra("id", -1) != -1) {
+            editMode = true;
             long id = getIntent().getLongExtra("id", -1);
             setTitle(R.string.editor_activity_title_edit_pet);
 
-            PetEntity editPet = petsViewModel.getPetById(id);
+            editPet = petsViewModel.getPetById(id);
 
             mNameEditText.setText(editPet.getName());
             mBreedEditText.setText(editPet.getBreed());
@@ -140,13 +143,30 @@ public class EditorActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
-                petsViewModel.insertPet(new PetEntity(
-                        mNameEditText.getText().toString(),
-                        mBreedEditText.getText().toString(),
-                        mGenderSpinner.getSelectedItem().toString(),
-                        Integer.parseInt(mWeightEditText.getText().toString()))
-                );
-                finish();
+                if (mNameEditText.getText().toString().isEmpty() ||
+                        mBreedEditText.getText().toString().isEmpty() ||
+                        mWeightEditText.getText().toString().isEmpty()) {
+                    Toast.makeText(this, "Please fill all the fields", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    if (!editMode) {
+                        petsViewModel.insertPet(new PetEntity(
+                                mNameEditText.getText().toString(),
+                                mBreedEditText.getText().toString(),
+                                mGenderSpinner.getSelectedItem().toString(),
+                                Integer.parseInt(mWeightEditText.getText().toString())));
+                    }
+                    else {
+                        editPet.setName(mNameEditText.getText().toString());
+                        editPet.setBreed(mBreedEditText.getText().toString());
+                        editPet.setGender(mGenderSpinner.getSelectedItem().toString());
+                        editPet.setWeight(Integer.parseInt(mWeightEditText.getText().toString()));
+
+                        petsViewModel.updatePet(editPet);
+                    }
+                    finish();
+                }
+
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
