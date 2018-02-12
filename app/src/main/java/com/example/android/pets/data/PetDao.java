@@ -12,8 +12,11 @@ import java.util.List;
 
 @Dao
 public interface PetDao {
-    @Query("SELECT * FROM pets")
+    @Query("select * from pets")
     LiveData<List<PetEntity>> loadAllPets();
+
+    @Query("select * from pets where id == :id")
+    PetEntity getPetById(long id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertPet(PetEntity pet);
