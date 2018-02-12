@@ -25,6 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.android.pets.data.PetEntity;
@@ -73,6 +74,14 @@ public class CatalogActivity extends AppCompatActivity {
             public void onChanged(@Nullable List<PetEntity> pets) {
                 petAdapter = new PetAdapter(getApplicationContext(), pets);
                 petsListView.setAdapter(petAdapter);
+                petsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
+                        intent.putExtra("id", id + 1);
+                        startActivity(intent);
+                    }
+                });
             }
         });
     }
