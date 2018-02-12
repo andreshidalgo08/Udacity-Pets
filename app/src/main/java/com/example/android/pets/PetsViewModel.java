@@ -43,6 +43,14 @@ public class PetsViewModel extends AndroidViewModel {
         }.start();
     }
 
+    public void updatePet(PetEntity pet) {
+        new Thread() {
+            public void run() {
+                db.petDao().updatePet(pet);
+            }
+        }.start();
+    }
+
     public PetEntity getPetById(long id) {
         PetEntity editPet = null;
         try {
