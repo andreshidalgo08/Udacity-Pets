@@ -3,7 +3,6 @@ package com.example.android.pets;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.example.android.pets.data.AppDatabase;
@@ -27,22 +26,18 @@ public class PetsViewModel extends AndroidViewModel {
     }
 
     public void insertDummyPet() {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
+        new Thread() {
+            public void run() {
                 db.petDao().insertPet(new PetEntity("pet", "breed", "gender", 100));
-                return null;
             }
-        }.execute();
+        }.start();
     };
 
     public void insertPet(PetEntity pet) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
+        new Thread() {
+            public void run() {
                 db.petDao().insertPet(pet);
-                return null;
             }
-        }.execute();
+        }.start();
     };
 }
