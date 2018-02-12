@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -79,10 +80,10 @@ public class EditorActivity extends AppCompatActivity {
 
             mNameEditText.setText(editPet.getName());
             mBreedEditText.setText(editPet.getBreed());
-            mWeightEditText.setText(editPet.getWeight());
+            mWeightEditText.setText(Integer.toString(editPet.getWeight()));
 
-            /*int spinnerPosition = genderSpinnerAdapter.getPosition(editPet.getGender());
-            mGenderSpinner.setSelection(spinnerPosition);*/
+            int spinnerPosition = genderSpinnerAdapter.getPosition(editPet.getGender());
+            mGenderSpinner.setSelection(spinnerPosition);
         }
     }
 
