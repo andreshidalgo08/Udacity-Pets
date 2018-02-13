@@ -62,6 +62,14 @@ public class PetsViewModel extends AndroidViewModel {
         }
     }
 
+    public void deletePet(PetEntity pet) {
+        new Thread() {
+            public void run() {
+                db.petDao().deletePet(pet);
+            }
+        }.start();
+    }
+
     private static class getPetByIdAsyncTask extends AsyncTask<Long, Void, PetEntity> {
         private AppDatabase db;
 
