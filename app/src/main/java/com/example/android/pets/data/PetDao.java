@@ -26,4 +26,7 @@ public interface PetDao {
 
     @Delete
     void deletePet(PetEntity pet);
+
+    @Query("delete from pets")
+    void deleteAllPets();
 }
