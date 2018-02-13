@@ -105,6 +105,9 @@ public class EditorActivity extends AppCompatActivity {
             int spinnerPosition = genderSpinnerAdapter.getPosition(editPet.getGender());
             mGenderSpinner.setSelection(spinnerPosition);
         }
+        else {
+            invalidateOptionsMenu();
+        }
     }
 
     /**
@@ -151,6 +154,17 @@ public class EditorActivity extends AppCompatActivity {
         // Inflate the menu options from the res/menu/menu_editor.xml file.
         // This adds menu items to the app bar.
         getMenuInflater().inflate(R.menu.menu_editor, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        // If this is a new pet, hide the "Delete" menu item.
+        if (!editMode) {
+            MenuItem menuItem = menu.findItem(R.id.action_delete);
+            menuItem.setVisible(false);
+        }
         return true;
     }
 
